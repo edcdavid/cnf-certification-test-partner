@@ -28,6 +28,7 @@ ${CONTAINER_CLIENT} load < nginx-operator-bundle.tar.gz
 
 # Push it in the registry
 ${CONTAINER_CLIENT} push $HOSTNAME/nginx-operator-bundle:v0.0.1 
+${CONTAINER_CLIENT} push $HOSTNAME/nginx-operator:v0.0.1 
 
 # Cleanup previous deployment if present
 operator-sdk cleanup nginx-operator -n $TNF_PARTNER_NAMESPACE
