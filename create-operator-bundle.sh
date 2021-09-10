@@ -1,4 +1,8 @@
+#!/usr/bin/env bash
 set -x
+
+#setting sudo
+sudo echo "setting sudo root"
 
 # Initialization
 DEFAULT_CONTAINER_EXECUTABLE="docker"
@@ -9,10 +13,6 @@ HOSTNAME=cnftest-local.redhat.com
 if [[ -z "${TNF_PARTNER_NAMESPACE}" ]]; then
     export TNF_PARTNER_NAMESPACE="tnf"
 fi
-
-# Create secret (must be named cert.pem)
-cp ../certs/registry.pem certs/cert.pem
-oc create secret generic foo-cert-sec --from-file=certs/cert.pem  -n $TNF_PARTNER_NAMESPACE
 
 # Install operator sdk
 ## Configure platform
@@ -115,7 +115,10 @@ make bundle IMG="cnftest-local.redhat.com/nginx-operator:v0.0.1"
 IMAGE_TAG_BASE=$HOSTNAME/nginx-operator make bundle-build bundle-push
 
 # Save the bundle package
-${CONTAINER_CLIENT} save $HOSTNAME/nginx-operator-bundle:v0.0.1 > ../nginx-operator.tar
+${CONTAINER_CLIENT} save $HOSTNAME/nginx-operator-bundle:v0.0.1 > ../nginx-operator-bundle.tar
+${CONTAINER_CLIENT} save $HOSTNAME/nginx-operator:v0.0.1 > ../nginx-operator.tar
+gzip -d ../nginx-operator-bundle.tar
+gzip -d ../nginx-operator.tar
 
 # Display bundle file location
 cd ..

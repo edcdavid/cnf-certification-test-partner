@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -x
 
+#setting sudo
+sudo echo "setting sudo root"
+
 # Initialization
 DEFAULT_CONTAINER_EXECUTABLE="docker"
 CONTAINER_CLIENT="${CONTAINER_EXECUTABLE:-$DEFAULT_CONTAINER_EXECUTABLE}"
@@ -53,9 +56,9 @@ cat /etc/hosts
 HOSTNAME=$(hostname)
 ${CONTAINER_CLIENT} rm -f registry
 
-# Create secret (must be named cert.pem)
-cp certs/registry.pem certs/cert.pem
-oc create secret generic foo-cert-sec --from-file=certs/cert.pem  -n $TNF_PARTNER_NAMESPACE
+# Copy the certificate to the minikube directory for use by minikube
+mkdir -p $HOME/.minikube/certs
+cp certs/registry.pem $HOME/.minikube/certs/. 
 
 # Remove the docker registry 
 ${CONTAINER_CLIENT} rm -f registry
@@ -70,5 +73,11 @@ ${CONTAINER_CLIENT} run -d \
   -e REGISTRY_HTTP_TLS_KEY=/certs/registry.key \
   -p 443:443 \
   registry:2
+
+# Restart docker 
+if [ ${CONTAINER_CLIENT}="docker" ];
+then
+  sudo systemctl restart docker
+fi
 
 echo "Created local registry at: ${HOSTNAME}:443"
