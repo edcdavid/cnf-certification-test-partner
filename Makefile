@@ -11,6 +11,7 @@ install-operator-github:
 	bash ./deploy-operator.sh
 
 minikube:
+	./create-local-registry.sh;\
 	./deploy-minikube.sh;\
 	./deploy-test-pods.sh;\
 	./deploy-partner-pods.sh;\

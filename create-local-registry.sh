@@ -45,7 +45,7 @@ if [ -z $( grep "$HOSTNAME" /etc/hosts) ]
 then
   REGISTRY_ADDRESS=$(hostname -I|awk '{print $1}')
   echo REGISTRY_ADDRESS= $REGISTRY_ADDRESS 
-  sudo REGISTRY_ADDRESS1="$REGISTRY_ADDRESS" sh -c 'echo "$REGISTRY_ADDRESS1 ${HOSTNAME}" >> /etc/hosts'
+  sudo REGISTRY_ADDRESS1="$REGISTRY_ADDRESS" sh -c 'echo "$REGISTRY_ADDRESS1 $HOSTNAME" >> /etc/hosts'
 else 
   echo "entry already present"
 fi
