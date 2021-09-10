@@ -10,5 +10,12 @@ install-partner-pods:
 install-operator-github:
 	bash ./deploy-operator.sh
 
+minikube:
+	./deploy-minikube.sh;\
+	./deploy-test-pods.sh;\
+	./deploy-partner-pods.sh;\
+	./create-operator-bundle.sh;\
+	./deploy-operator.sh
+
 clean:
 	bash ./clean-all.sh
