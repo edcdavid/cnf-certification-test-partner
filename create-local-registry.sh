@@ -9,6 +9,7 @@ DEFAULT_CONTAINER_EXECUTABLE="docker"
 CONTAINER_CLIENT="${CONTAINER_EXECUTABLE:-$DEFAULT_CONTAINER_EXECUTABLE}"
 CERT_EXE_UBUNTU=update-ca-certificates
 CERT_EXE_REDHAT=update-ca-trust
+CERT_EXE_MACOS=security
 HOSTNAME=cnftest-local.redhat.com
 echo "$(which $CERT_EXE_UBUNTU 2>/dev/null)"]
 if [[ -n "$(which $CERT_EXE_UBUNTU 2>/dev/null)" ]];
@@ -23,11 +24,17 @@ then
   CERT_UPDATER=$CERT_EXE_REDHAT
   CERT_PATH=/etc/pki/ca-trust/source/anchors/$HOSTNAME.crt
 
+elif [[ -n "$(which $CERT_EXE_MACOS 2>/dev/null)" ]];
+then
+  echo "Running on MACOS"
+  CERT_UPDATER=$CERT_EXE_MACOS
+  CERT_PATH=/Library/Keychains/System.keychain
+
 else
   echo "OS unknown, don't know how to update certificates"
   exit 1
 fi
-
+ 
 # Create certificates for registry authentication
 rm -rf certs
 mkdir certs
@@ -37,9 +44,13 @@ chmod 666 certs/*
 
 
 # Enable the new certificates for use in the current host
-sudo cp certs/registry.crt  $CERT_PATH
-sudo $CERT_UPDATER
-
+if [ "$CERT_UPDATER" = "$CERT_EXE_MACOS" ];
+then
+  sudo security add-trusted-cert -d -r trustRoot -k $CERT_PATH  certs/registry.crt
+else
+  sudo cp certs/registry.crt  $CERT_PATH
+  sudo $CERT_UPDATER
+fi
 # Add the hostname to /etc/hosts
 if [ -z $( grep "$HOSTNAME" /etc/hosts) ]
 then
