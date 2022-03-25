@@ -1,0 +1,16 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: test-catalog
+  namespace: {{ TNF_EXAMPLE_CNF_NAMESPACE }} 
+spec:
+  sourceType: grpc
+  image: registry.redhat.io/redhat/certified-operator-index:v4.7
+  displayName: redhat-certified
+  publisher: Redhat
+  secrets:
+  - redhat-registry-secret
+  - redhat-connect-registry-secret
+  updateStrategy:
+    registryPoll: 
+      interval: 30m

@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: test-subscription
+  namespace: {{ TNF_EXAMPLE_CNF_NAMESPACE }}  
+spec:
+  channel: alpha 
+  name: kong-offline-operator 
+  source: test-catalog 
+  sourceNamespace: {{ TNF_EXAMPLE_CNF_NAMESPACE }} 
