@@ -44,10 +44,12 @@ rm ./temp/rendered-local-certified-operator-subscription.yaml
 
 # Wait for the operator SA to appear so that we can add the pull secret to it
 TIMEOUT=24 # 240 seconds
-while [[ $(sh -c "oc get sa -n$TNF_EXAMPLE_CNF_NAMESPACE| grep $CERTIFIED_OPERATOR_BASE") = ""  ]]; do
+while [[ $(sh -c "oc get sa -n$TNF_EXAMPLE_CNF_NAMESPACE| grep $CERTIFIED_OPERATOR_BASE") = "" && "$TIMEOUT" -gt 0 ]]; do
 	echo "waiting for service account $CERTIFIED_OPERATOR_BASE to appear"
 	sleep 10
 	TIMEOUT=$(($TIMEOUT-1))
+	oc get pods -n $TNF_EXAMPLE_CNF_NAMESPACE
+	oc get sa -n $TNF_EXAMPLE_CNF_NAMESPACE
 	echo $TIMEOUT
 done
 if [ "$TIMEOUT" -le 0  ]; then
@@ -66,6 +68,8 @@ while [[ $(oc get csv -n $TNF_EXAMPLE_CNF_NAMESPACE $CERTIFIED_OPERATOR_NAME -o 
         echo "waiting for $CERTIFIED_OPERATOR_NAME installation to succeed"
         sleep 10
 	TIMEOUT=$(($TIMEOUT-1))
+	oc get pods -n $TNF_EXAMPLE_CNF_NAMESPACE
+	oc get sa -n $TNF_EXAMPLE_CNF_NAMESPACE
 	echo $TIMEOUT
 done
 
