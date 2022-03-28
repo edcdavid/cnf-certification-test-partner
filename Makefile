@@ -10,9 +10,10 @@ install:
 	./scripts/deploy-multus-network.sh
 	./scripts/deploy-test-pods.sh
 	./scripts/deploy-statefulset-test-pods.sh
-	./scripts/deploy-operator.sh
 	./scripts/deploy-test-crds.sh
 	./scripts/deploy-debug-ds.sh
+	./scripts/install-olm.sh
+	./scripts/deploy-certified-operator.sh
 
 # creates a k8s cluster instance
 rebuild-cluster:
@@ -40,6 +41,12 @@ install-partner-pods:
 # Instal operator requires OLM and operator SDK
 install-operator:
 	./scripts/deploy-operator.sh
+
+install-certified-operator:
+	./scripts/deploy-certified-operator.sh
+
+delete-certified-operator:
+	./scripts/delete-certified-operator.sh
 
 # Install test CRDs
 install-crds:

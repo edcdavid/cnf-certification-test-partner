@@ -4,7 +4,7 @@ metadata:
   name: test-subscription
   namespace: {{ TNF_EXAMPLE_CNF_NAMESPACE }}  
 spec:
-  channel: alpha 
-  name: kong-offline-operator 
+  channel: production 
+  name: redis-enterprise-operator-cert
   source: test-catalog 
-  sourceNamespace: {{ TNF_EXAMPLE_CNF_NAMESPACE }} 
+  sourceNamespace: {{ CATALOG_NAMESPACE }} 
