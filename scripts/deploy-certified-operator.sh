@@ -42,10 +42,21 @@ cat ./test-target/certified-operator-subscription.yaml | CATALOG_NAMESPACE=$CATA
 oc apply -f ./temp/rendered-local-certified-operator-subscription.yaml
 rm ./temp/rendered-local-certified-operator-subscription.yaml
 
+# Wait for the operator SA to appear so that we can add the pull secret to it
+TIMEOUT=24 # 240 seconds
 while [[ $(sh -c "oc get sa -n$TNF_EXAMPLE_CNF_NAMESPACE| grep $CERTIFIED_OPERATOR_BASE") = ""  ]]; do
 	echo "waiting for service account $CERTIFIED_OPERATOR_BASE to appear"
-	sleep 5
+	sleep 10
+	TIMEOUT=$(($TIMEOUT-1))
+	echo $TIMEOUT
 done
+if [ "$TIMEOUT" -le 0  ]; then
+	echo "timed out waiting for the sa to appear"
+	oc get csv -n $TNF_EXAMPLE_CNF_NAMESPACE
+	exit 1
+fi
+
+# Adding the pull secret to the SA and redeploying the pod in case they have already started
 oc secrets link $CERTIFIED_OPERATOR_BASE -n $TNF_EXAMPLE_CNF_NAMESPACE redhat-connect-registry-secret --for=pull
 oc scale -n $TNF_EXAMPLE_CNF_NAMESPACE deployment/$CERTIFIED_OPERATOR_BASE --replicas=0
 oc scale -n $TNF_EXAMPLE_CNF_NAMESPACE deployment/$CERTIFIED_OPERATOR_BASE --replicas=1
@@ -68,4 +79,3 @@ oc get csv -n $TNF_EXAMPLE_CNF_NAMESPACE
 
 # Label the certified operator
 oc label clusterserviceversions.operators.coreos.com $CERTIFIED_OPERATOR_NAME -n $TNF_EXAMPLE_CNF_NAMESPACE test-network-function.com/operator=target
-

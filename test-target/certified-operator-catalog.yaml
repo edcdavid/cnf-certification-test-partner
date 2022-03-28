@@ -9,8 +9,8 @@ spec:
   displayName: redhat-certified
   publisher: Redhat
   secrets:
-  - redhat-registry-secret
-  - redhat-connect-registry-secret
+    - redhat-registry-secret
+    - redhat-connect-registry-secret
   updateStrategy:
     registryPoll: 
       interval: 30m
