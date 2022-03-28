@@ -22,7 +22,6 @@ fi
 
 # Links the secret to the default service account
 oc secrets link default -n $TNF_EXAMPLE_CNF_NAMESPACE redhat-registry-secret --for=pull
-oc secrets link default -n $TNF_EXAMPLE_CNF_NAMESPACE redhat-connect-registry-secret --for=pull
 
 # Create the Redhat catalog source
 mkdir -p ./temp
